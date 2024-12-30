@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Platforms>AnyCPU</Platforms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="wwwroot\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="GenHTTP.Core" Version="9.4.0" />
+    <PackageReference Include="GenHTTP.Modules.Webservices" Version="9.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Photino.NET" Version="3.2.3" />
+    <PackageReference Include="YoutubeDlSharp" Version="1.1.1" />
+  </ItemGroup>
+
+  <Target Name="RunCustomScript" BeforeTargets="Build">
+    <Exec Command="powershell -ExecutionPolicy Bypass -File ./build.ps1" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="sh ./build.sh" Condition="'$(OS)' != 'Windows_NT'" /> 
+  </Target>
+  
+</Project>
