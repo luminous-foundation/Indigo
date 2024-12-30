@@ -11,6 +11,7 @@ public class YoutubeController
     [ResourceMethod(RequestMethod.Post)]
     public async Task PostSong(SongCreationData data)
     {
+        Console.WriteLine(data.url);
         YoutubeDL dl = new YoutubeDL();
         dl.YoutubeDLPath = Path.Join(Initializer.GetHomeDirectory().FullName, Initializer.BinaryName());
         dl.FFmpegPath = Path.Join(Initializer.GetHomeDirectory().FullName, Initializer.BinaryName2());
@@ -24,10 +25,20 @@ public class YoutubeController
         }
         else
         {
+            Console.WriteLine(data.playlist.Name + " " + data.playlist.Path);
             dl.OutputFolder = data.playlist.Path;
         }
 
-        await dl.RunAudioDownload(data.url, AudioConversionFormat.M4a);
+        Progress<string> output = new();
+        output.ProgressChanged += (sender, args) => {
+            Console.WriteLine(sender + " " + args);
+        };
+
+        if(data.url.Contains("/playlist?")) {
+            await dl.RunAudioPlaylistDownload(data.url, format: AudioConversionFormat.M4a, output: output);
+        } else {
+            await dl.RunAudioDownload(data.url, AudioConversionFormat.M4a, output: output);
+        }
     }
 }
 
