@@ -484,5 +484,5 @@ $RECYCLE.BIN/
 *.swp
 
 
-wwwroot/
+wwwroot/_app/*
 .idea
