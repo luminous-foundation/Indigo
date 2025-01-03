@@ -1,18 +1,14 @@
 ﻿using Photino.NET;
 using System.Drawing;
 using System.Net.NetworkInformation;
-using System.Text.Json;
 using GenHTTP.Api.Infrastructure;
-using GenHTTP.Api.Protocol;
 using GenHTTP.Engine.Internal;
 using GenHTTP.Modules.Conversion;
-using GenHTTP.Modules.Conversion.Serializers.Json;
 using GenHTTP.Modules.Layouting;
 using GenHTTP.Modules.Layouting.Provider;
 using GenHTTP.Modules.Security;
 using GenHTTP.Modules.Webservices;
 using Indigo.App.Controllers;
-using Indigo.App.Types;
 
 namespace Indigo.App
 {
@@ -24,9 +20,9 @@ namespace Indigo.App
         public volatile bool ApiReady = false;
         
         [STAThread]
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Task.Run(async () => await DispatchWebserver());
+            await StartWebserver();
             
             Initializer.CreateHomeDirectory();
             
@@ -49,7 +45,7 @@ namespace Indigo.App
             window.WaitForClose(); // Starts the application event loop
         }
         
-        public static async Task DispatchWebserver()
+        public static async Task StartWebserver()
         {
             IPGlobalProperties props = IPGlobalProperties.GetIPGlobalProperties();
             int[] connections = props.GetActiveTcpConnections().Select(x => x.LocalEndPoint.Port).ToArray();
@@ -69,7 +65,7 @@ namespace Indigo.App
             IServerHost server = Host.Create().Handler(l);
             server.Port((ushort)port);
             
-            await server.RunAsync();
+            await server.StartAsync();
         }
     }
 }
